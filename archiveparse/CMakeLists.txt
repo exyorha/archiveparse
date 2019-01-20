@@ -1,5 +1,7 @@
 add_library(archiveparse STATIC
+	include/archiveparse/BSAFile.h
 	include/archiveparse/BSAFilesystemLayer.h
+	include/archiveparse/BSAHash.h
 	include/archiveparse/BSATypes.h
 	include/archiveparse/EncodingUtilities.h
 	include/archiveparse/File.h
@@ -8,7 +10,10 @@ add_library(archiveparse STATIC
 	include/archiveparse/FilesystemLayerFactory.h
 	include/archiveparse/LooseFilesFilesystemLayer.h
 	include/archiveparse/WindowsHandle.h
+	archiveparse/BSAFile.cpp
 	archiveparse/BSAFilesystemLayer.cpp
+	archiveparse/BSAHash.cpp
+	archiveparse/BSATypes.cpp
 	archiveparse/EncodingUtilities.cpp
 	archiveparse/File.cpp
 	archiveparse/Filesystem.cpp

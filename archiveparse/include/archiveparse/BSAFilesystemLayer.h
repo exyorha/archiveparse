@@ -32,6 +32,7 @@ namespace archiveparse {
 			std::vector<uint32_t> nameOffsets;
 			std::vector<char> fileNames;
 			std::vector<MorrowindFileNameHash> fileNameHashes;
+			size_t headerSize;
 		};
 
 		struct CurrentData {

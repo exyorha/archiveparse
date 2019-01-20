@@ -1,6 +1,7 @@
 #include <archiveparse/Filesystem.h>
 #include <archiveparse/FilesystemLayer.h>
 #include <archiveparse/FilesystemLayerFactory.h>
+#include <archiveparse/File.h>
 
 #include <fstream>
 
@@ -23,4 +24,16 @@ int main(int argc, char **argv) {
 	for (const auto &filename : fs.enumerate()) {
 		logfile << filename << "\n";
 	}
+
+	auto file = fs.lookup("meshes\\x\\ex_hlaalu_b_01.nif");
+	if (!file)
+		throw std::logic_error("test file not found");
+
+	std::ofstream dumpFile;
+	dumpFile.exceptions(std::ios::failbit | std::ios::badbit | std::ios::eofbit);
+	dumpFile.open("C:\\projects\\archiveparse\\dump.bin", std::ios::out | std::ios::trunc | std::ios::binary);
+
+	std::vector<char> data(file->fileSize());
+	file->readFile(data.data(), data.size(), 0);
+	dumpFile.write(data.data(), data.size());
 }

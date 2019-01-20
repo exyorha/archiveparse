@@ -1,13 +1,15 @@
 #include <archiveparse/BSAFilesystemLayer.h>
 #include <archiveparse/BSATypes.h>
-#include <archiveparse/File.h>
+#include <archiveparse/BSAFile.h>
 #include <archiveparse/EncodingUtilities.h>
+#include <archiveparse/BSAHash.h>
 
 #include <Windows.h>
 #include <comdef.h>
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 #include <io.h>
 #include <fcntl.h>
@@ -92,6 +94,8 @@ namespace archiveparse {
 			data.fileNameHashes.resize(data.header.fileCount);
 
 			header.read(reinterpret_cast<char *>(data.fileNameHashes.data()), data.fileNameHashes.size() * sizeof(MorrowindFileNameHash));
+
+			data.headerSize = static_cast<size_t>(header.tellg());
 		}
 		else {
 			std::stringstream stream;
@@ -117,7 +121,41 @@ namespace archiveparse {
 	}
 
 	std::unique_ptr<File> BSAFilesystemLayer::lookupInData(const MorrowindData &data, const std::string &filename) const {
-		throw std::logic_error("unimplemented");
+		auto wideFilename = utf8ToWide(filename);
+		std::wstring lowercaseFilename;
+
+		auto result = LCMapStringEx(LOCALE_NAME_INVARIANT, LCMAP_LOWERCASE, wideFilename.data(), wideFilename.size(), lowercaseFilename.data(), lowercaseFilename.size(), nullptr, nullptr, 0);
+		if (result == 0)
+			throw std::runtime_error("LCMapStringEx failed");
+
+		lowercaseFilename.resize(result);
+
+		result = LCMapStringEx(LOCALE_NAME_INVARIANT, LCMAP_LOWERCASE, wideFilename.data(), wideFilename.size(), lowercaseFilename.data(), lowercaseFilename.size(), nullptr, nullptr, 0);
+		if (result == 0)
+			throw std::runtime_error("LCMapStringEx failed");
+		
+		for (auto &ch : lowercaseFilename) {
+			if (ch == L'/')
+				ch = L'\\';
+		}
+
+		auto morrowindFilename = wideToCodepage(lowercaseFilename, data.fileNameCodePage);
+		auto hash = calculateMorrowindHash(morrowindFilename);
+
+		auto range = std::equal_range(data.fileNameHashes.begin(), data.fileNameHashes.end(), hash);
+
+		for (auto item = range.first; item != range.second; item++) {
+			auto index = item - data.fileNameHashes.begin();
+			auto nameOffset = data.nameOffsets[index];
+
+			auto nameBegin = data.fileNames.begin() + nameOffset;
+			auto nameEnd = std::find(nameBegin, data.fileNames.end(), 0);
+			if (std::equal(morrowindFilename.begin(), morrowindFilename.end(), nameBegin, nameEnd)) {
+				return std::make_unique<BSAFile>(m_handle.get(), data.fileSizesAndOffsets[index].fileOffset + data.headerSize, data.fileSizesAndOffsets[index].fileSize);
+			}
+		}
+
+		return {};
 	}
 
 	std::vector<std::string> BSAFilesystemLayer::enumerateData(const MorrowindData &data) const {

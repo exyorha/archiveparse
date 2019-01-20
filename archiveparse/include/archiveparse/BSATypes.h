@@ -22,6 +22,8 @@ namespace archiveparse {
 	struct MorrowindFileNameHash {
 		uint32_t val1;
 		uint32_t val2;
+
+		bool operator <(const MorrowindFileNameHash &other) const;
 	};
 }
 
