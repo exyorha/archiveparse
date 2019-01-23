@@ -31,13 +31,27 @@ namespace archiveparse {
 			std::vector<MorrowindFileSizeAndOffset> fileSizesAndOffsets;
 			std::vector<uint32_t> nameOffsets;
 			std::vector<char> fileNames;
-			std::vector<MorrowindFileNameHash> fileNameHashes;
+			std::vector<MorrowindBSAFileNameHash> fileNameHashes;
 			size_t headerSize;
 		};
 
-		struct CurrentData {
-
+		struct FolderData {
+			CurrentBSAFileNameHash nameHash;
+			std::string name;
+			std::vector<CurrentBSAFile> files;
+			std::vector<std::string> fileNames;
 		};
+
+		struct CurrentData {
+			unsigned int fileNameCodePage;
+			CurrentBSAHeader header;
+			std::vector<FolderData> folders;
+		};
+
+		friend bool operator <(const BSAFilesystemLayer::FolderData &a, const CurrentBSAFileNameHash &b);
+		friend bool operator <(const CurrentBSAFileNameHash &a, const BSAFilesystemLayer::FolderData &b);
+		friend bool operator <(const BSAFilesystemLayer::FolderData &a, const BSAFilesystemLayer::FolderData &b);
+		
 
 		std::unique_ptr<File> lookupInData(const MorrowindData &data, const std::string &filename) const;
 		std::vector<std::string> enumerateData(const MorrowindData &data) const;
@@ -45,6 +59,7 @@ namespace archiveparse {
 		std::unique_ptr<File> lookupInData(const CurrentData &data, const std::string &filename) const;
 		std::vector<std::string> enumerateData(const CurrentData &data) const;
 
+		static std::string sanitizeFilename(const std::string &filename, unsigned int codepage);
 
 		WindowsHandle m_handle;
 		std::variant<MorrowindData, CurrentData> m_data;
