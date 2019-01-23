@@ -8,6 +8,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
 endif()
 
 add_subdirectory(zlib)
+add_subdirectory(lz4)
 add_subdirectory(archiveparse)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})

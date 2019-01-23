@@ -52,6 +52,8 @@ namespace archiveparse {
 		friend bool operator <(const CurrentBSAFileNameHash &a, const BSAFilesystemLayer::FolderData &b);
 		friend bool operator <(const BSAFilesystemLayer::FolderData &a, const BSAFilesystemLayer::FolderData &b);
 		
+		template<typename T>
+		void readFolders(CurrentData &data, std::istream &header);
 
 		std::unique_ptr<File> lookupInData(const MorrowindData &data, const std::string &filename) const;
 		std::vector<std::string> enumerateData(const MorrowindData &data) const;

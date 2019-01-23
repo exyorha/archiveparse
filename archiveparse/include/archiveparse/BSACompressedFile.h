@@ -10,7 +10,12 @@
 namespace archiveparse {
 	class BSACompressedFile final : public File {
 	public:
-		BSACompressedFile(HANDLE handle, uint64_t offset, size_t size);
+		enum class Algorithm {
+			Zlib,
+			LZ4
+		};
+
+		BSACompressedFile(HANDLE handle, uint64_t offset, size_t size, Algorithm algorithm);
 		virtual ~BSACompressedFile();
 
 		BSACompressedFile(const BSACompressedFile &other) = delete;

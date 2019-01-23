@@ -12,6 +12,7 @@ namespace archiveparse {
 		CurrentBSAMagic = 0x00415342,
 		OblivionBSAVersion = 103,
 		SkyrimBSAVersion = 104,
+		SkyrimSEBSAVersion = 105,
 
 		BSAFolderNamesRetained = 1,
 		BSAFileNamesRetained = 2,
@@ -69,6 +70,13 @@ namespace archiveparse {
 		CurrentBSAFileNameHash nameHash;
 		uint32_t count;
 		uint32_t offset;
+	};
+
+	struct SSEBSAFolder {
+		CurrentBSAFileNameHash nameHash;
+		uint32_t count;
+		uint32_t _pad1;
+		uint64_t offset;
 	};
 
 	struct CurrentBSAFile {

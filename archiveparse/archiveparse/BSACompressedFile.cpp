@@ -1,8 +1,10 @@
 #include <archiveparse/BSACompressedFile.h>
 
 #include <vector>
+#include <memory>
 
 #include <zlib.h>
+#include <lz4frame.h>
 
 namespace archiveparse {
 	static void *zlibAlloc(void *opaque, unsigned int items, unsigned int size) {
@@ -15,7 +17,13 @@ namespace archiveparse {
 		free(address);
 	}
 
-	BSACompressedFile::BSACompressedFile(HANDLE handle, uint64_t offset, size_t size) {
+	struct LZ4ContextDeleter {
+		void operator()(LZ4F_dctx *ctx) {
+			LZ4F_freeDecompressionContext(ctx);
+		}
+	};
+
+	BSACompressedFile::BSACompressedFile(HANDLE handle, uint64_t offset, size_t size, Algorithm algorithm) {
 		std::vector<unsigned char> compressedData(size);
 
 		DWORD bytesRead;
@@ -31,24 +39,55 @@ namespace archiveparse {
 
 		m_data.resize(uncompressedLength);
 
-		z_stream stream;
-		memset(&stream, 0, sizeof(stream));
-		stream.next_in = compressedData.data() + 4;
-		stream.avail_in = compressedData.size() - 4;
-		stream.next_out = m_data.data();
-		stream.avail_out = m_data.size();
+		if (algorithm == Algorithm::Zlib) {
+			z_stream stream;
+			memset(&stream, 0, sizeof(stream));
+			stream.next_in = compressedData.data() + 4;
+			stream.avail_in = compressedData.size() - 4;
+			stream.next_out = m_data.data();
+			stream.avail_out = m_data.size();
 
-		stream.zalloc = zlibAlloc;
-		stream.zfree = zlibFree;
-		if (inflateInit(&stream) != Z_OK)
-			throw std::runtime_error("inflateInit failed");
+			stream.zalloc = zlibAlloc;
+			stream.zfree = zlibFree;
+			if (inflateInit(&stream) != Z_OK)
+				throw std::runtime_error("inflateInit failed");
 
-		if (inflate(&stream, Z_FINISH) != Z_STREAM_END) {
+			if (inflate(&stream, Z_FINISH) != Z_STREAM_END) {
+				inflateEnd(&stream);
+				throw std::runtime_error("inflate failed");
+			}
+
 			inflateEnd(&stream);
-			throw std::runtime_error("inflate failed");
 		}
+		else if (algorithm == Algorithm::LZ4) {
+			std::unique_ptr<LZ4F_dctx, LZ4ContextDeleter> context;
+			LZ4F_dctx *rawCtx;
+			if (LZ4F_isError(LZ4F_createDecompressionContext(&rawCtx, LZ4F_VERSION))) {
+				throw std::logic_error("LZ4F_createDecompressionContext failed");
+			}
 
-		inflateEnd(&stream);
+			context.reset(rawCtx);
+
+			auto outPtr = m_data.data();
+			auto outEnd = outPtr + m_data.size();
+
+			auto inPtr = compressedData.data() + 4;
+			auto inEnd = inPtr + compressedData.size() - 4;
+
+			while (outPtr < outEnd || inPtr < inEnd) {
+				size_t inSize = inEnd - inPtr;
+				size_t outSize = outEnd - outPtr;
+
+				LZ4F_decompress(context.get(), outPtr, &outSize, inPtr, &inSize, nullptr);
+
+				inPtr += inSize;
+				outPtr += outSize;
+
+				if (inSize == 0 && outSize == 0)
+					throw std::logic_error("LZ4F_decompress failed");
+
+			}
+		}
 	}
 
 	BSACompressedFile::~BSACompressedFile() {

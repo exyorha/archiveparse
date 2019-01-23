@@ -22,6 +22,40 @@ namespace archiveparse {
 		}
 	};
 
+	template<typename T>
+	void BSAFilesystemLayer::readFolders(BSAFilesystemLayer::CurrentData &data, std::istream &header) {
+		std::vector<T> folders;
+
+		header.seekg(data.header.folderOffset);
+		folders.resize(data.header.folderCount);
+		header.read(reinterpret_cast<char *>(folders.data()), folders.size() * sizeof(CurrentBSAFolder));
+
+		data.folders.reserve(data.header.folderCount);
+
+		for (const auto &folder : folders) {
+			if (folder.offset == 0)
+				continue;
+
+			auto &outFolder = data.folders.emplace_back();
+
+			outFolder.nameHash = folder.nameHash;
+
+			header.seekg(folder.offset - data.header.totalFileNameLength);
+
+			if (data.header.archiveFlags & BSAFolderNamesRetained) {
+				uint8_t nameLength;
+				header.read(reinterpret_cast<char *>(&nameLength), sizeof(nameLength));
+				outFolder.name.resize(nameLength);
+				header.read(outFolder.name.data(), outFolder.name.size());
+				outFolder.name.erase(std::find(outFolder.name.begin(), outFolder.name.end(), '\0'), outFolder.name.end());
+			}
+
+			outFolder.files.resize(folder.count);
+			header.read(reinterpret_cast<char *>(outFolder.files.data()), outFolder.files.size() * sizeof(CurrentBSAFile));
+		}
+
+	}
+
 	BSAFilesystemLayer::BSAFilesystemLayer(std::string &&path, std::unordered_map<std::string, std::string> &&options) {
 		HANDLE rawHandle = CreateFile(utf8ToWide(path).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
 			FILE_ATTRIBUTE_NORMAL, NULL);
@@ -114,42 +148,28 @@ namespace archiveparse {
 			header.read(reinterpret_cast<char *>(&data.header) + sizeof(data.header.magic),
 				sizeof(data.header) - sizeof(data.header.magic));
 
-			if (data.header.version < OblivionBSAVersion || data.header.version > SkyrimBSAVersion) {
+			if (data.header.version < OblivionBSAVersion || data.header.version > SkyrimSEBSAVersion) {
 				std::stringstream stream;
 				stream << "Unsupported BSA file: version " << data.header.version;
 				throw std::runtime_error(stream.str());
 			}
 
-			std::vector<CurrentBSAFolder> folders;
-
-			header.seekg(data.header.folderOffset);
-			folders.resize(data.header.folderCount);
-			header.read(reinterpret_cast<char *>(folders.data()), folders.size() * sizeof(CurrentBSAFolder));
-
-			data.folders.reserve(data.header.folderCount);
-
-			for (const auto &folder : folders) {
-				auto &outFolder = data.folders.emplace_back();
-
-				outFolder.nameHash = folder.nameHash;
-
-				header.seekg(folder.offset - data.header.totalFileNameLength);
-
-				if (data.header.archiveFlags & BSAFolderNamesRetained) {
-					uint8_t nameLength;
-					header.read(reinterpret_cast<char *>(&nameLength), sizeof(nameLength));
-					outFolder.name.resize(nameLength);
-					header.read(outFolder.name.data(), outFolder.name.size());
-					outFolder.name.erase(std::find(outFolder.name.begin(), outFolder.name.end(), '\0'), outFolder.name.end());
-				}
-
-				outFolder.files.resize(folder.count);
-				header.read(reinterpret_cast<char *>(outFolder.files.data()), outFolder.files.size() * sizeof(CurrentBSAFile));
+			if (data.header.version < SkyrimSEBSAVersion) {
+				readFolders<CurrentBSAFolder>(data, header);
+			}
+			else {
+				readFolders<SSEBSAFolder>(data, header);
 			}
 
 			size_t expectedPosition = data.header.folderOffset;
 
-			expectedPosition += data.header.folderCount * sizeof(CurrentBSAFolder);
+			if (data.header.version < SkyrimSEBSAVersion) {
+				expectedPosition += data.header.folderCount * sizeof(CurrentBSAFolder);
+			}
+			else {
+				expectedPosition += data.header.folderCount * sizeof(SSEBSAFolder);
+				
+			}
 
 			if (data.header.archiveFlags & BSAFolderNamesRetained) {
 				expectedPosition += sizeof(unsigned char) * data.header.folderCount;
@@ -158,11 +178,17 @@ namespace archiveparse {
 
 			expectedPosition += data.header.fileCount * sizeof(CurrentBSAFile);
 
-			if (header.tellg() != expectedPosition) {
-				throw std::logic_error("current position is unexpected");
+			printf("Current position: %08X\n", static_cast<size_t>(header.tellg()));
+
+			if (data.header.version < SkyrimSEBSAVersion) {
+				if (header.tellg() != expectedPosition) {
+					throw std::logic_error("current position is unexpected");
+				}
 			}
-
-
+			else {
+				header.seekg(expectedPosition);
+			}
+			
 			if (data.header.archiveFlags & BSAFileNamesRetained) {
 				std::vector<char> nameHeap;
 				nameHeap.resize(data.header.totalFileNameLength);
@@ -186,9 +212,9 @@ namespace archiveparse {
 			}
 		}
 		else {
-		std::stringstream stream;
-		stream << "Unsupported BSA file: magic " << std::hex << magic;
-		throw std::runtime_error(stream.str());
+			std::stringstream stream;
+			stream << "Unsupported BSA file: magic " << std::hex << magic;
+			throw std::runtime_error(stream.str());
 		}
 	}
 
@@ -306,7 +332,7 @@ namespace archiveparse {
 			const auto &directory = *item;
 
 			if (!(data.header.archiveFlags & BSAFolderNamesRetained) || std::equal(directory.name.begin(), directory.name.end(), bsaFilename.begin(), directoryDelimiter.base() - 1)) {
-
+				
 				std::string baseName(directoryDelimiter.base(), bsaFilename.end());
 				CurrentBSAFileNameHash fileHash(calculateCurrentHashWithExtension(baseName));
 
@@ -340,10 +366,16 @@ namespace archiveparse {
 							throw std::runtime_error("ReadFile failed");
 
 						offset += nameLength + 1;
+						size -= nameLength + 1;
 					}
 
 					if (((data.header.archiveFlags & BSACompressedByDefault) != 0) != ((file.size & BSAFileSizeFlagCompressed) != 0)) {
-						return std::make_unique<BSACompressedFile>(m_handle.get(), offset, size);
+						auto algorithm = BSACompressedFile::Algorithm::Zlib;
+
+						if (data.header.version >= SkyrimSEBSAVersion)
+							algorithm = BSACompressedFile::Algorithm::LZ4;
+
+						return std::make_unique<BSACompressedFile>(m_handle.get(), offset, size, algorithm);
 					}
 					else {
 						return std::make_unique<BSAFile>(m_handle.get(), offset, size);
