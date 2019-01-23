@@ -13,17 +13,33 @@ int main(int argc, char **argv) {
 	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Morrowind\\Data Files\\Tribunal.bsa", {}));
 	//fs.addLayer(factory.createLayer("LooseFiles", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Morrowind\\Data Files", {}));
 
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Meshes.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Misc.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Sounds.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Textures - Compressed.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Voices1.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Voices2.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Meshes.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Sounds.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Textures.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Voices.bsa", {}));
-	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Knights.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Meshes.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Misc.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Sounds.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Textures - Compressed.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Voices1.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Oblivion - Voices2.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Meshes.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Sounds.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Textures.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\DLCShiveringIsles - Voices.bsa", {}));
+	//fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Oblivion\\Data\\Knights.bsa", {}));
+
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Animations.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Interface.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Meshes.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Misc.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Shaders.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Sounds.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - Voices.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Skyrim - VoicesExtra.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Update.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Dawnguard.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\Dragonborn.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\HearthFires.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\HighResTexturePack01.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\HighResTexturePack02.bsa", {}));
+	fs.addLayer(factory.createLayer("BSA", "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Skyrim\\Data\\HighResTexturePack03.bsa", {}));
 
 	std::ofstream logfile;
 	logfile.exceptions(std::ios::failbit | std::ios::badbit | std::ios::eofbit);
@@ -38,8 +54,10 @@ int main(int argc, char **argv) {
 	}
 
 	//auto file = fs.lookup("meshes\\x\\ex_hlaalu_b_01.nif");
-	auto file = fs.lookup("textures\\architecture\\anvil\\altarcloth.dds");
+	//auto file = fs.lookup("textures\\architecture\\anvil\\altarcloth.dds");
 	//auto file = fs.lookup("trees\\treecottonwoodsu.spt");
+	//auto file = fs.lookup("meshes\\dungeons\\imperial\\largehall\\implhalldetwist02.nif");
+	auto file = fs.lookup("textures\\actors\\elk\\elkbody.dds");
 	if (!file)
 		throw std::logic_error("test file not found");
 

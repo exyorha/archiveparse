@@ -11,12 +11,15 @@ namespace archiveparse {
 
 		CurrentBSAMagic = 0x00415342,
 		OblivionBSAVersion = 103,
+		SkyrimBSAVersion = 104,
 
 		BSAFolderNamesRetained = 1,
 		BSAFileNamesRetained = 2,
 		BSACompressedByDefault = 4,
+		BSAHasEmbeddedFileNames_Skyrim = 256,
+
 		BSAFileSizeFlagCompressed = 1U << 30,
-		BSAFileSizeMask = (1U << 30) - 1
+		BSAFileSizeMask = (1U << 30) - 1,
 	};
 
 	struct MorrowindBSAHeader {

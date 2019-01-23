@@ -114,7 +114,7 @@ namespace archiveparse {
 			header.read(reinterpret_cast<char *>(&data.header) + sizeof(data.header.magic),
 				sizeof(data.header) - sizeof(data.header.magic));
 
-			if (data.header.version != OblivionBSAVersion) {
+			if (data.header.version < OblivionBSAVersion || data.header.version > SkyrimBSAVersion) {
 				std::stringstream stream;
 				stream << "Unsupported BSA file: version " << data.header.version;
 				throw std::runtime_error(stream.str());
@@ -326,12 +326,27 @@ namespace archiveparse {
 					const auto &file = *fileItem;
 
 					auto size = file.size & BSAFileSizeMask;
+					auto offset = file.offset;
+
+					if (data.header.version >= SkyrimBSAVersion && (data.header.archiveFlags & BSAHasEmbeddedFileNames_Skyrim)) {
+						unsigned char nameLength;
+						DWORD bytesRead;
+						OVERLAPPED overlapped;
+						ZeroMemory(&overlapped, sizeof(overlapped));
+						overlapped.Offset = static_cast<DWORD>(static_cast<uint64_t>(offset));
+						overlapped.OffsetHigh = static_cast<DWORD>(static_cast<uint64_t>(offset) >> 32);
+
+						if (!ReadFile(m_handle.get(), &nameLength, sizeof(nameLength), &bytesRead, &overlapped) || bytesRead != sizeof(nameLength))
+							throw std::runtime_error("ReadFile failed");
+
+						offset += nameLength + 1;
+					}
 
 					if (((data.header.archiveFlags & BSACompressedByDefault) != 0) != ((file.size & BSAFileSizeFlagCompressed) != 0)) {
-						return std::make_unique<BSACompressedFile>(m_handle.get(), file.offset, size);
+						return std::make_unique<BSACompressedFile>(m_handle.get(), offset, size);
 					}
 					else {
-						return std::make_unique<BSAFile>(m_handle.get(), file.offset, size);
+						return std::make_unique<BSAFile>(m_handle.get(), offset, size);
 					}
 				}
 
