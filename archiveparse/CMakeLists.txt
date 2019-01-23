@@ -1,4 +1,5 @@
 add_library(archiveparse STATIC
+	include/archiveparse/BSACompressedFile.h
 	include/archiveparse/BSAFile.h
 	include/archiveparse/BSAFilesystemLayer.h
 	include/archiveparse/BSAHash.h
@@ -10,6 +11,7 @@ add_library(archiveparse STATIC
 	include/archiveparse/FilesystemLayerFactory.h
 	include/archiveparse/LooseFilesFilesystemLayer.h
 	include/archiveparse/WindowsHandle.h
+	archiveparse/BSACompressedFile.cpp
 	archiveparse/BSAFile.cpp
 	archiveparse/BSAFilesystemLayer.cpp
 	archiveparse/BSAHash.cpp
@@ -24,3 +26,4 @@ add_library(archiveparse STATIC
 )
 target_include_directories(archiveparse PUBLIC include)
 target_compile_definitions(archiveparse PRIVATE -DUNICODE -D_UNICODE)
+target_link_libraries(archiveparse PRIVATE zlib)

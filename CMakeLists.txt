@@ -7,6 +7,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
 	set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
+add_subdirectory(zlib)
 add_subdirectory(archiveparse)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})

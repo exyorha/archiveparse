@@ -3,6 +3,7 @@
 #include <archiveparse/BSAFile.h>
 #include <archiveparse/EncodingUtilities.h>
 #include <archiveparse/BSAHash.h>
+#include <archiveparse/BSACompressedFile.h>
 
 #include <Windows.h>
 #include <comdef.h>
@@ -324,12 +325,14 @@ namespace archiveparse {
 
 					const auto &file = *fileItem;
 
-					if(((data.header.archiveFlags & BSACompressedByDefault) != 0) != ((file.size & BSAFileSizeFlagCompressed) != 0))
-						throw std::logic_error("compressed files are not yet supported");
-
 					auto size = file.size & BSAFileSizeMask;
 
-					return std::make_unique<BSAFile>(m_handle.get(), file.offset, size);
+					if (((data.header.archiveFlags & BSACompressedByDefault) != 0) != ((file.size & BSAFileSizeFlagCompressed) != 0)) {
+						return std::make_unique<BSACompressedFile>(m_handle.get(), file.offset, size);
+					}
+					else {
+						return std::make_unique<BSAFile>(m_handle.get(), file.offset, size);
+					}
 				}
 
 				break;
