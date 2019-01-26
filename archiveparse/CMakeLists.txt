@@ -10,6 +10,7 @@ add_library(archiveparse STATIC
 	include/archiveparse/FilesystemLayer.h
 	include/archiveparse/FilesystemLayerFactory.h
 	include/archiveparse/LooseFilesFilesystemLayer.h
+	include/archiveparse/WindowsError.h
 	include/archiveparse/WindowsHandle.h
 	archiveparse/BSACompressedFile.cpp
 	archiveparse/BSAFile.cpp
@@ -22,6 +23,7 @@ add_library(archiveparse STATIC
 	archiveparse/FilesystemLayer.cpp
 	archiveparse/FilesystemLayerFactory.cpp
 	archiveparse/LooseFilesFilesystemLayer.cpp
+	archiveparse/WindowsError.cpp
 	archiveparse/WindowsHandle.cpp
 )
 target_include_directories(archiveparse PUBLIC include)

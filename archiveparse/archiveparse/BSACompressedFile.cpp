@@ -1,4 +1,5 @@
 #include <archiveparse/BSACompressedFile.h>
+#include <archiveparse/WindowsError.h>
 
 #include <vector>
 #include <memory>
@@ -32,8 +33,11 @@ namespace archiveparse {
 		overlapped.Offset = static_cast<DWORD>(offset);
 		overlapped.OffsetHigh = static_cast<DWORD>(offset >> 32);
 
-		if (!ReadFile(handle, compressedData.data(), size, &bytesRead, &overlapped) || bytesRead != size)
-			throw std::runtime_error("ReadFile failed for compressed file");
+		if (!ReadFile(handle, compressedData.data(), size, &bytesRead, &overlapped))
+			throw WindowsError();
+
+		if (bytesRead != size)
+			throw std::runtime_error("short read");
 
 		uint32_t uncompressedLength = compressedData[0] | (compressedData[1] << 8) | (compressedData[2] << 16) | (compressedData[3] << 24);
 

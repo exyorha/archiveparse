@@ -4,9 +4,7 @@
 #include <archiveparse/EncodingUtilities.h>
 #include <archiveparse/BSAHash.h>
 #include <archiveparse/BSACompressedFile.h>
-
-#include <Windows.h>
-#include <comdef.h>
+#include <archiveparse/WindowsError.h>
 
 #include <fstream>
 #include <sstream>
@@ -60,7 +58,7 @@ namespace archiveparse {
 		HANDLE rawHandle = CreateFile(utf8ToWide(path).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
 			FILE_ATTRIBUTE_NORMAL, NULL);
 		if (rawHandle == INVALID_HANDLE_VALUE)
-			_com_raise_error(HRESULT_FROM_WIN32(GetLastError()));
+			throw WindowsError();
 
 
 		m_handle.reset(rawHandle);
@@ -75,7 +73,7 @@ namespace archiveparse {
 			GENERIC_READ,
 			FALSE,
 			0))
-			_com_raise_error(HRESULT_FROM_WIN32(GetLastError()));
+			throw WindowsError();
 
 		WindowsHandle dupHandle(rawDup);
 

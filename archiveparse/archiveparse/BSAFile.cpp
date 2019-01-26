@@ -1,6 +1,5 @@
 #include <archiveparse/BSAFile.h>
-
-#include <comdef.h>
+#include <archiveparse/WindowsError.h>
 
 namespace archiveparse {
 	BSAFile::BSAFile(HANDLE handle, uint64_t offset, size_t size) : m_file(handle), m_offset(offset), m_size(size) {
@@ -32,7 +31,7 @@ namespace archiveparse {
 		overlapped.OffsetHigh = static_cast<DWORD>(fullOffset >> 32);
 
 		if (!ReadFile(m_file, buf, static_cast<DWORD>(size), &bytesRead, &overlapped))
-			_com_raise_error(HRESULT_FROM_WIN32(GetLastError()));
+			throw WindowsError();
 
 		return bytesRead;
 	}
