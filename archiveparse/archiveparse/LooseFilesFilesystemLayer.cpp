@@ -1,6 +1,7 @@
 #include <archiveparse/LooseFilesFilesystemLayer.h>
 
 #include <unordered_map>
+#include <stdexcept>
 
 namespace archiveparse {
 	LooseFilesFilesystemLayer::LooseFilesFilesystemLayer(std::string &&path, std::unordered_map<std::string, std::string> &&options) {
