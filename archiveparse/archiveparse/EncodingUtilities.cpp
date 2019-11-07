@@ -2,6 +2,8 @@
 
 #include <Windows.h>
 
+#include <stdexcept>
+
 namespace archiveparse {
 	namespace impl {
 		std::wstring multiByteToWideChar(unsigned int codepage, unsigned int flags, const std::string &string) {
