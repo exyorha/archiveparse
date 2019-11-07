@@ -14,6 +14,10 @@ namespace archiveparse {
 
 		virtual std::unique_ptr<File> lookup(const std::string &filename) const override;
 		virtual std::vector<std::string> enumerate() const override;
+
+	private:
+		std::string m_path;
+		unsigned int m_fileNameCodePage;
 	};
 }
 

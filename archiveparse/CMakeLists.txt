@@ -9,6 +9,7 @@ add_library(archiveparse STATIC
 	include/archiveparse/Filesystem.h
 	include/archiveparse/FilesystemLayer.h
 	include/archiveparse/FilesystemLayerFactory.h
+	include/archiveparse/LooseFile.h
 	include/archiveparse/LooseFilesFilesystemLayer.h
 	include/archiveparse/WindowsError.h
 	include/archiveparse/WindowsHandle.h
@@ -22,6 +23,7 @@ add_library(archiveparse STATIC
 	archiveparse/Filesystem.cpp
 	archiveparse/FilesystemLayer.cpp
 	archiveparse/FilesystemLayerFactory.cpp
+	archiveparse/LooseFile.cpp
 	archiveparse/LooseFilesFilesystemLayer.cpp
 	archiveparse/WindowsError.cpp
 	archiveparse/WindowsHandle.cpp
