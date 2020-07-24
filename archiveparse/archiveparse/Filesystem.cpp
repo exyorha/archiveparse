@@ -5,13 +5,9 @@
 #include <algorithm>
 
 namespace archiveparse {
-	Filesystem::Filesystem() {
+	Filesystem::Filesystem() = default;
 
-	}
-
-	Filesystem::~Filesystem() {
-
-	}	
+	Filesystem::~Filesystem() = default;
 
 	void Filesystem::addLayer(std::unique_ptr<FilesystemLayer> &&layer) {
 		m_layers.emplace_back(std::move(layer));

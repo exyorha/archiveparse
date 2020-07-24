@@ -176,8 +176,6 @@ namespace archiveparse {
 
 			expectedPosition += data.header.fileCount * sizeof(CurrentBSAFile);
 
-			printf("Current position: %08X\n", static_cast<size_t>(header.tellg()));
-
 			if (data.header.version < SkyrimSEBSAVersion) {
 				if (header.tellg() != expectedPosition) {
 					throw std::logic_error("current position is unexpected");

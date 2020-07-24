@@ -11,13 +11,9 @@ namespace archiveparse {
 		{ "LooseFiles", &FilesystemLayerFactory::layerFactory<LooseFilesFilesystemLayer> },
 	};
 
-	FilesystemLayerFactory::FilesystemLayerFactory() {
+	FilesystemLayerFactory::FilesystemLayerFactory() = default;
 
-	}
-
-	FilesystemLayerFactory::~FilesystemLayerFactory() {
-
-	}
+	FilesystemLayerFactory::~FilesystemLayerFactory() = default;
 
 	std::unique_ptr<FilesystemLayer> FilesystemLayerFactory::createLayer(const char *providerName, std::string &&path, std::unordered_map<std::string, std::string> &&options) {
 		auto factory = static_cast<LayerFactory *>(

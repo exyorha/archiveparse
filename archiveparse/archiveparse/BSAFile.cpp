@@ -6,9 +6,7 @@ namespace archiveparse {
 
 	}
 
-	BSAFile::~BSAFile() {
-
-	}
+	BSAFile::~BSAFile() = default;
 
 	size_t BSAFile::fileSize() const {
 		return m_size;

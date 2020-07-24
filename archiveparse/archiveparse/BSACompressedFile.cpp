@@ -94,9 +94,7 @@ namespace archiveparse {
 		}
 	}
 
-	BSACompressedFile::~BSACompressedFile() {
-
-	}
+	BSACompressedFile::~BSACompressedFile() = default;
 
 	size_t BSACompressedFile::fileSize() const {
 		return m_data.size();

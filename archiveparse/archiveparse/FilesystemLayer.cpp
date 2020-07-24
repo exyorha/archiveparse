@@ -1,11 +1,7 @@
 #include <archiveparse/FilesystemLayer.h>
 
 namespace archiveparse {
-	FilesystemLayer::FilesystemLayer() {
+	FilesystemLayer::FilesystemLayer() = default;
 
-	}
-
-	FilesystemLayer::~FilesystemLayer() {
-
-	}
+	FilesystemLayer::~FilesystemLayer() = default;
 }

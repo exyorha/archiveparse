@@ -8,9 +8,7 @@ namespace archiveparse {
 
 	}
 
-	WindowsError::~WindowsError() noexcept {
-
-	}
+	WindowsError::~WindowsError() noexcept = default;
 
 	std::string WindowsError::errorToString(DWORD error) {
 		struct PointerReleaser {

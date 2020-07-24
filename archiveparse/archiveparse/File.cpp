@@ -1,11 +1,7 @@
 #include <archiveparse/File.h>
 
 namespace archiveparse {
-	File::File() {
+	File::File() = default;
 
-	}
-
-	File::~File() {
-
-	}
+	File::~File() = default;
 }
