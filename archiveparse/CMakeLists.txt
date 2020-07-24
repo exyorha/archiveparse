@@ -31,3 +31,4 @@ add_library(archiveparse STATIC
 target_include_directories(archiveparse PUBLIC include)
 target_compile_definitions(archiveparse PRIVATE -DUNICODE -D_UNICODE)
 target_link_libraries(archiveparse PRIVATE zlib lz4)
+set_target_properties(archiveparse PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED TRUE CXX_EXTENSIONS OFF)
